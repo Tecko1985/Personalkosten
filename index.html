@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>💶 Personalkosten Mannschaften</title>
 <meta name="theme-color" content="#1a56a0" />
-<link rel="stylesheet" href="style.css?v=1.0" />
+<link rel="stylesheet" href="style.css?v=1.1" />
 </head>
 <body>
 
@@ -47,6 +47,9 @@
       <!-- ---------- Übersicht ---------- -->
       <section class="tab-section active" id="tab-uebersicht">
         <div class="summary-cards" id="summary-cards"></div>
+        <div class="btn-row" style="justify-content:flex-end;margin-bottom:14px;">
+          <button class="btn secondary" id="btn-export-open">📤 Personal exportieren</button>
+        </div>
         <div class="card">
           <h2>Nach Mannschaft</h2>
           <div class="table-scroll">
@@ -190,8 +193,32 @@
     </div>
   </div>
 
-  <script src="config.js?v=1.0"></script>
+  <!-- ---------- Export ---------- -->
+  <div class="modal-overlay hidden" id="export-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📤 Personal exportieren</h2>
+        <button class="modal-close" id="export-modal-close" aria-label="Schließen">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted" style="margin-bottom:14px;">Exportiert werden alle Personen der Saison <strong id="export-modal-season"></strong> (Trainer, Schwerpunkttrainer, Förderung). Welche Angaben sollen im Export enthalten sein?</p>
+        <div class="export-fields" id="export-fields"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" id="btn-export-cancel">Abbrechen</button>
+        <div class="btn-row">
+          <button class="btn secondary" id="btn-export-text">📄 Als Text (.txt)</button>
+          <button class="btn success" id="btn-export-pdf">🖨 Als PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Druckbereich (nur für PDF-Export sichtbar) ---------- -->
+  <div id="print-area"><div id="print-content"></div></div>
+
+  <script src="config.js?v=1.1"></script>
   <script src="db.js?v=1.0"></script>
-  <script src="app.js?v=1.0"></script>
+  <script src="app.js?v=1.1"></script>
 </body>
 </html>

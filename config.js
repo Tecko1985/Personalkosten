@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 // Jahres-Faktor für Hochrechnung Monat -> Jahr (Sommerpause: 11 statt 12 Monate,
 // wie in der Excel "Summe/Jahr" = Summe * 11).
@@ -44,6 +44,18 @@ const BEREICHE = [
 ];
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Export",
+        items: [
+          "Personalübersicht (Trainer, Schwerpunkttrainer, Förderung) exportierbar — als Text (.txt) zum Weitergeben oder als PDF zum Drucken/Ablegen.",
+          "Frei wählbar, welche Angaben (Mannschaft, Position, Lizenz, AE/Monat, …) im Export enthalten sein sollen."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [

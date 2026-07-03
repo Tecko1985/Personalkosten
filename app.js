@@ -240,6 +240,127 @@ function renderBereich(bereich) {
   document.getElementById(bereich + "-empty").classList.toggle("hidden", list.length > 0);
 }
 
+// ---------- Export (Text / PDF) ----------
+// Vereinheitlichte Spalten über alle drei Bereiche hinweg ("das Personal" als Ganzes).
+// Felder, die für Schwerpunkt/Förderung nicht gelten (Lizenz, Stelle, …), bleiben dort leer/"—".
+const EXPORT_FIELDS = [
+  { key: "bereich", label: "Bereich" },
+  { key: "name", label: "Name" },
+  { key: "mannschaft", label: "Mannschaft" },
+  { key: "position", label: "Position" },
+  { key: "jahrgangsleiter", label: "Jahrgangsleiter" },
+  { key: "lizenz", label: "Lizenz" },
+  { key: "landesebene", label: "Landesebene" },
+  { key: "stelle", label: "Stelle", num: true, fmt: (v) => (v == null ? "—" : fmtPct(v)) },
+  { key: "ae100", label: "AE 100%", num: true, fmt: (v) => (v == null ? "—" : fmtEuro(v)) },
+  { key: "aeMonat", label: "AE / Monat", num: true, fmt: (v) => fmtEuro(v) },
+  { key: "besonderheit", label: "Besonderheit" }
+];
+EXPORT_FIELDS.forEach((f) => { if (!f.fmt) f.fmt = (v) => v || ""; });
+const EXPORT_DEFAULT_KEYS = ["bereich", "name", "mannschaft", "position", "aeMonat"];
+
+function personalRows() {
+  const s = getSeason();
+  const rows = [];
+  s.trainer.forEach((t) => rows.push({
+    bereich: "Trainer", name: t.name || "", mannschaft: t.mannschaft || "", position: t.position || "",
+    jahrgangsleiter: t.jahrgangsleiter || "", lizenz: t.lizenz || "", landesebene: t.landesebene || "",
+    stelle: Number(t.stelle) || 0, ae100: trainerAe100(t), aeMonat: trainerAeIst(t),
+    besonderheit: t.besonderheit || ""
+  }));
+  s.schwerpunkt.forEach((x) => rows.push({
+    bereich: "Schwerpunkttrainer", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
+    jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
+    aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
+  }));
+  s.foerderung.forEach((x) => rows.push({
+    bereich: "Förderung", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
+    jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
+    aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
+  }));
+  rows.sort((a, b) => a.name.localeCompare(b.name, "de"));
+  return rows;
+}
+
+// Lokales Datum (nicht toISOString, das liefert UTC und springt um Mitternacht auf den Vortag).
+function localDateIso() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function download(filename, type, content) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+function openExportModal() {
+  document.getElementById("export-modal-season").textContent = currentSeasonKey();
+  document.getElementById("export-fields").innerHTML = EXPORT_FIELDS.map((f) => `
+    <label class="export-field-row">
+      <input type="checkbox" data-export-field="${f.key}" ${EXPORT_DEFAULT_KEYS.includes(f.key) ? "checked" : ""} />
+      <span>${escapeHtml(f.label)}</span>
+    </label>`).join("");
+  document.getElementById("export-modal").classList.remove("hidden");
+}
+function closeExportModal() {
+  document.getElementById("export-modal").classList.add("hidden");
+}
+function selectedExportFields() {
+  return EXPORT_FIELDS.filter((f) => document.querySelector(`[data-export-field="${f.key}"]`).checked);
+}
+
+function exportPersonalText() {
+  const fields = selectedExportFields();
+  if (!fields.length) { alert("Bitte mindestens eine Angabe auswählen."); return; }
+  const rows = personalRows();
+  const widths = fields.map((f) => Math.max(f.label.length, ...rows.map((r) => String(f.fmt(r[f.key])).length)));
+  const line = (cells) => cells.map((c, i) => {
+    const s = String(c);
+    return fields[i].num ? s.padStart(widths[i]) : s.padEnd(widths[i]);
+  }).join("  ");
+  const sepLine = widths.map((w) => "-".repeat(w)).join("  ");
+  let out = `Personalübersicht — Saison ${currentSeasonKey()}\n`;
+  out += `Erstellt am ${new Date().toLocaleString("de-DE")}\n\n`;
+  out += line(fields.map((f) => f.label)) + "\n" + sepLine + "\n";
+  out += rows.map((r) => line(fields.map((f) => f.fmt(r[f.key])))).join("\n") + "\n";
+  if (fields.some((f) => f.key === "aeMonat")) {
+    const total = rows.reduce((a, r) => a + (Number(r.aeMonat) || 0), 0);
+    out += sepLine + "\n" + `${rows.length} Personen — Summe AE / Monat: ${fmtEuro(total)}\n`;
+  }
+  download(`personalkosten_${currentSeasonKey().replace("/", "-")}_${localDateIso()}.txt`, "text/plain", "﻿" + out);
+  closeExportModal();
+}
+
+function exportPersonalPdf() {
+  const fields = selectedExportFields();
+  if (!fields.length) { alert("Bitte mindestens eine Angabe auswählen."); return; }
+  const rows = personalRows();
+  const theadHtml = `<tr>${fields.map((f) => `<th${f.num ? ' class="num"' : ""}>${escapeHtml(f.label)}</th>`).join("")}</tr>`;
+  const rowsHtml = rows.map((r) => `<tr>${fields.map((f) => `<td${f.num ? ' class="num"' : ""}>${escapeHtml(f.fmt(r[f.key]))}</td>`).join("")}</tr>`).join("");
+  let totalRow = "";
+  if (fields.some((f) => f.key === "aeMonat")) {
+    const total = rows.reduce((a, r) => a + (Number(r.aeMonat) || 0), 0);
+    totalRow = `<tr class="total-row">${fields.map((f, i) => {
+      if (f.key === "aeMonat") return `<td class="num">${escapeHtml(fmtEuro(total))}</td>`;
+      return i === 0 ? `<td>Summe (${rows.length} Personen)</td>` : "<td></td>";
+    }).join("")}</tr>`;
+  }
+  document.getElementById("print-content").innerHTML = `
+    <h1>💶 Personalübersicht</h1>
+    <p class="print-meta">Saison ${escapeHtml(currentSeasonKey())} — erstellt am ${new Date().toLocaleString("de-DE")}</p>
+    <table class="print-table">
+      <thead>${theadHtml}</thead>
+      <tbody>${rowsHtml}${totalRow}</tbody>
+    </table>`;
+  closeExportModal();
+  document.body.classList.add("printing-report");
+  const cleanup = () => { document.body.classList.remove("printing-report"); window.removeEventListener("afterprint", cleanup); };
+  window.addEventListener("afterprint", cleanup);
+  setTimeout(() => window.print(), 150);
+}
+
 // ---------- Parameter-Editor ----------
 const PARAM_GROUPS = [
   { key: "positionen", label: "Positionen" },
@@ -672,8 +793,17 @@ function setupListeners() {
   document.getElementById("btn-import-seed").addEventListener("click", () => document.getElementById("import-file-input").click());
   document.getElementById("import-file-input").addEventListener("change", (e) => { handleImportFile(e.target.files[0]); e.target.value = ""; });
 
+  // Export
+  document.getElementById("btn-export-open").addEventListener("click", openExportModal);
+  document.getElementById("export-modal-close").addEventListener("click", closeExportModal);
+  document.getElementById("btn-export-cancel").addEventListener("click", closeExportModal);
+  document.getElementById("btn-export-text").addEventListener("click", exportPersonalText);
+  document.getElementById("btn-export-pdf").addEventListener("click", exportPersonalPdf);
+  document.getElementById("export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") closeExportModal(); });
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !document.getElementById("person-modal").classList.contains("hidden")) closePersonModal();
+    if (e.key === "Escape" && !document.getElementById("export-modal").classList.contains("hidden")) closeExportModal();
   });
 }
 

@@ -201,6 +201,25 @@ tr.total-row td { border-top: 2px solid var(--blue); font-weight: 700; backgroun
 .changelog-group .cg-title { font-weight: 700; font-size: 14px; color: var(--blue); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
 .changelog-group .cg-items { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; color: var(--text); }
 
+/* ---------- Export-Modal ---------- */
+.export-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px 14px; }
+.export-field-row { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.export-field-row input { width: 16px; height: 16px; }
+
+/* ---------- Druckansicht (PDF-Export via window.print) ---------- */
+#print-area { display: none; }
+body.printing-report > *:not(#print-area) { display: none !important; }
+body.printing-report #print-area { display: block; padding: 20px; }
+#print-area h1 { font-size: 1.4rem; margin-bottom: 4px; color: #000; }
+#print-area .print-meta { font-size: 0.85rem; color: #444; margin-bottom: 16px; }
+.print-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.print-table th, .print-table td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; color: #000; }
+.print-table th.num, .print-table td.num { text-align: right; white-space: nowrap; }
+.print-table tr.total-row td { font-weight: 700; border-top: 2px solid #000; }
+@media print {
+  .print-table tr { page-break-inside: avoid; }
+}
+
 .muted { color: var(--muted); font-size: 13px; }
 .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
 .import-banner {
