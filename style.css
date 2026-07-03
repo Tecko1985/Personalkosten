@@ -202,6 +202,8 @@ tr.total-row td { border-top: 2px solid var(--blue); font-weight: 700; backgroun
 .changelog-group .cg-items { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; color: var(--text); }
 
 /* ---------- Export-Modal ---------- */
+.export-section-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin: 16px 0 8px; }
+.export-section-title:first-of-type { margin-top: 0; }
 .export-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px 14px; }
 .export-field-row { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
 .export-field-row input { width: 16px; height: 16px; }

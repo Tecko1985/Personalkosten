@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>💶 Personalkosten Mannschaften</title>
 <meta name="theme-color" content="#1a56a0" />
-<link rel="stylesheet" href="style.css?v=1.1" />
+<link rel="stylesheet" href="style.css?v=1.2" />
 </head>
 <body>
 
@@ -201,7 +201,10 @@
         <button class="modal-close" id="export-modal-close" aria-label="Schließen">×</button>
       </div>
       <div class="modal-body">
-        <p class="muted" style="margin-bottom:14px;">Exportiert werden alle Personen der Saison <strong id="export-modal-season"></strong> (Trainer, Schwerpunkttrainer, Förderung). Welche Angaben sollen im Export enthalten sein?</p>
+        <p class="muted" style="margin-bottom:14px;">Saison <strong id="export-modal-season"></strong> — wählt aus, welche Bereiche und Angaben in den Export übernommen werden sollen.</p>
+        <h3 class="export-section-title">Bereiche</h3>
+        <div class="export-fields" id="export-bereiche"></div>
+        <h3 class="export-section-title">Angaben</h3>
         <div class="export-fields" id="export-fields"></div>
       </div>
       <div class="modal-footer">
@@ -217,8 +220,8 @@
   <!-- ---------- Druckbereich (nur für PDF-Export sichtbar) ---------- -->
   <div id="print-area"><div id="print-content"></div></div>
 
-  <script src="config.js?v=1.1"></script>
+  <script src="config.js?v=1.2"></script>
   <script src="db.js?v=1.0"></script>
-  <script src="app.js?v=1.1"></script>
+  <script src="app.js?v=1.2"></script>
 </body>
 </html>

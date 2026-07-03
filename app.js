@@ -258,26 +258,38 @@ const EXPORT_FIELDS = [
 ];
 EXPORT_FIELDS.forEach((f) => { if (!f.fmt) f.fmt = (v) => v || ""; });
 const EXPORT_DEFAULT_KEYS = ["bereich", "name", "mannschaft", "position", "aeMonat"];
+const EXPORT_BEREICHE = [
+  { key: "trainer", label: "Trainer" },
+  { key: "schwerpunkt", label: "Schwerpunkttrainer" },
+  { key: "foerderung", label: "Förderung" }
+];
 
-function personalRows() {
+function personalRows(bereiche) {
+  const include = bereiche || EXPORT_BEREICHE.map((b) => b.key);
   const s = getSeason();
   const rows = [];
-  s.trainer.forEach((t) => rows.push({
-    bereich: "Trainer", name: t.name || "", mannschaft: t.mannschaft || "", position: t.position || "",
-    jahrgangsleiter: t.jahrgangsleiter || "", lizenz: t.lizenz || "", landesebene: t.landesebene || "",
-    stelle: Number(t.stelle) || 0, ae100: trainerAe100(t), aeMonat: trainerAeIst(t),
-    besonderheit: t.besonderheit || ""
-  }));
-  s.schwerpunkt.forEach((x) => rows.push({
-    bereich: "Schwerpunkttrainer", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
-    jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
-    aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
-  }));
-  s.foerderung.forEach((x) => rows.push({
-    bereich: "Förderung", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
-    jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
-    aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
-  }));
+  if (include.includes("trainer")) {
+    s.trainer.forEach((t) => rows.push({
+      bereich: "Trainer", name: t.name || "", mannschaft: t.mannschaft || "", position: t.position || "",
+      jahrgangsleiter: t.jahrgangsleiter || "", lizenz: t.lizenz || "", landesebene: t.landesebene || "",
+      stelle: Number(t.stelle) || 0, ae100: trainerAe100(t), aeMonat: trainerAeIst(t),
+      besonderheit: t.besonderheit || ""
+    }));
+  }
+  if (include.includes("schwerpunkt")) {
+    s.schwerpunkt.forEach((x) => rows.push({
+      bereich: "Schwerpunkttrainer", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
+      jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
+      aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
+    }));
+  }
+  if (include.includes("foerderung")) {
+    s.foerderung.forEach((x) => rows.push({
+      bereich: "Förderung", name: x.name || "", mannschaft: x.mannschaft || "", position: x.position || "",
+      jahrgangsleiter: "", lizenz: "", landesebene: "", stelle: null, ae100: null,
+      aeMonat: entryAe(x), besonderheit: x.besonderheit || ""
+    }));
+  }
   rows.sort((a, b) => a.name.localeCompare(b.name, "de"));
   return rows;
 }
@@ -297,6 +309,11 @@ function download(filename, type, content) {
 
 function openExportModal() {
   document.getElementById("export-modal-season").textContent = currentSeasonKey();
+  document.getElementById("export-bereiche").innerHTML = EXPORT_BEREICHE.map((b) => `
+    <label class="export-field-row">
+      <input type="checkbox" data-export-bereich="${b.key}" checked />
+      <span>${escapeHtml(b.label)}</span>
+    </label>`).join("");
   document.getElementById("export-fields").innerHTML = EXPORT_FIELDS.map((f) => `
     <label class="export-field-row">
       <input type="checkbox" data-export-field="${f.key}" ${EXPORT_DEFAULT_KEYS.includes(f.key) ? "checked" : ""} />
@@ -310,18 +327,24 @@ function closeExportModal() {
 function selectedExportFields() {
   return EXPORT_FIELDS.filter((f) => document.querySelector(`[data-export-field="${f.key}"]`).checked);
 }
+function selectedExportBereiche() {
+  return EXPORT_BEREICHE.filter((b) => document.querySelector(`[data-export-bereich="${b.key}"]`).checked);
+}
 
 function exportPersonalText() {
+  const bereiche = selectedExportBereiche();
+  if (!bereiche.length) { alert("Bitte mindestens einen Bereich auswählen."); return; }
   const fields = selectedExportFields();
   if (!fields.length) { alert("Bitte mindestens eine Angabe auswählen."); return; }
-  const rows = personalRows();
+  const rows = personalRows(bereiche.map((b) => b.key));
+  const scopeLabel = bereiche.map((b) => b.label).join(", ");
   const widths = fields.map((f) => Math.max(f.label.length, ...rows.map((r) => String(f.fmt(r[f.key])).length)));
   const line = (cells) => cells.map((c, i) => {
     const s = String(c);
     return fields[i].num ? s.padStart(widths[i]) : s.padEnd(widths[i]);
   }).join("  ");
   const sepLine = widths.map((w) => "-".repeat(w)).join("  ");
-  let out = `Personalübersicht — Saison ${currentSeasonKey()}\n`;
+  let out = `Personalübersicht (${scopeLabel}) — Saison ${currentSeasonKey()}\n`;
   out += `Erstellt am ${new Date().toLocaleString("de-DE")}\n\n`;
   out += line(fields.map((f) => f.label)) + "\n" + sepLine + "\n";
   out += rows.map((r) => line(fields.map((f) => f.fmt(r[f.key])))).join("\n") + "\n";
@@ -334,9 +357,12 @@ function exportPersonalText() {
 }
 
 function exportPersonalPdf() {
+  const bereiche = selectedExportBereiche();
+  if (!bereiche.length) { alert("Bitte mindestens einen Bereich auswählen."); return; }
   const fields = selectedExportFields();
   if (!fields.length) { alert("Bitte mindestens eine Angabe auswählen."); return; }
-  const rows = personalRows();
+  const rows = personalRows(bereiche.map((b) => b.key));
+  const scopeLabel = bereiche.map((b) => b.label).join(", ");
   const theadHtml = `<tr>${fields.map((f) => `<th${f.num ? ' class="num"' : ""}>${escapeHtml(f.label)}</th>`).join("")}</tr>`;
   const rowsHtml = rows.map((r) => `<tr>${fields.map((f) => `<td${f.num ? ' class="num"' : ""}>${escapeHtml(f.fmt(r[f.key]))}</td>`).join("")}</tr>`).join("");
   let totalRow = "";
@@ -349,7 +375,7 @@ function exportPersonalPdf() {
   }
   document.getElementById("print-content").innerHTML = `
     <h1>💶 Personalübersicht</h1>
-    <p class="print-meta">Saison ${escapeHtml(currentSeasonKey())} — erstellt am ${new Date().toLocaleString("de-DE")}</p>
+    <p class="print-meta">${escapeHtml(scopeLabel)} — Saison ${escapeHtml(currentSeasonKey())} — erstellt am ${new Date().toLocaleString("de-DE")}</p>
     <table class="print-table">
       <thead>${theadHtml}</thead>
       <tbody>${rowsHtml}${totalRow}</tbody>
