@@ -1,0 +1,4 @@
+# Startbestand/Seed enthält echte Personendaten -> niemals committen (nur Cloud)
+*.seed.json
+__seed_test.json
+seed*.json
