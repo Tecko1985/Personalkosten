@@ -50,7 +50,7 @@ const APP_CHANGELOG = [
       {
         title: "Navigation",
         items: [
-          "Link „Zurück zum Dashboard" oben auf der Seite ergänzt (Öffnen erfolgt jetzt im selben Tab statt in einem neuen)."
+          "Link „Zurück zum Dashboard“ oben auf der Seite ergänzt (Öffnen erfolgt jetzt im selben Tab statt in einem neuen)."
         ]
       }
     ]
