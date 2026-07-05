@@ -1,4 +1,4 @@
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.3";
 
 // Jahres-Faktor für Hochrechnung Monat -> Jahr (Sommerpause: 11 statt 12 Monate,
 // wie in der Excel "Summe/Jahr" = Summe * 11).
@@ -44,6 +44,17 @@ const BEREICHE = [
 ];
 
 const APP_CHANGELOG = [
+  {
+    version: "1.3",
+    groups: [
+      {
+        title: "Navigation",
+        items: [
+          "Der Tab „Einstellungen“ ist jetzt sichtbar von den übrigen Tabs abgesetzt (rechtsbündig in der Tab-Leiste), wie in der Tools-Übersicht."
+        ]
+      }
+    ]
+  },
   {
     version: "1.2",
     groups: [
