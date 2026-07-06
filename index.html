@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>💶 Personalkosten Mannschaften</title>
+<meta name="theme-color" content="#1a56a0" />
+<link rel="stylesheet" href="style.css?v=1.0" />
+</head>
+<body>
+
+  <div class="connect-screen" id="connect-screen">
+    <div class="card">
+      <h2>💶 Personalkosten Mannschaften</h2>
+      <p id="connect-message">Bitte über die Tools-Übersicht anmelden, um die Personalkostenplanung zu sehen.</p>
+      <div class="btn-row">
+        <a class="btn" href="https://tecko1985.github.io/ToolsUebersicht/">Zur Tools-Übersicht</a>
+      </div>
+      <p class="muted" id="cloud-error" style="margin-top:14px;"></p>
+    </div>
+  </div>
+
+  <div id="app-shell" style="display:none;">
+    <header>
+      <h1>💶 Personalkosten <span class="version-badge" id="version-badge"></span></h1>
+      <a href="https://tecko1985.github.io/ToolsUebersicht/" class="back-to-dashboard">← Zurück zum Dashboard</a>
+      <div class="header-right">
+        <label class="season-picker">Saison
+          <select id="season-select"></select>
+        </label>
+        <span class="header-status" id="save-status"></span>
+        <span class="header-user" id="header-user"></span>
+        <img class="header-logo" src="logo.png" alt="1. SC 1911 e.V. Heilbad Heiligenstadt" />
+      </div>
+    </header>
+
+    <nav>
+      <button data-tab="uebersicht" class="active">Übersicht</button>
+      <button data-tab="trainer">Trainer</button>
+      <button data-tab="schwerpunkt">Schwerpunkttrainer</button>
+      <button data-tab="foerderung">Förderung</button>
+      <button data-tab="parameter" class="admin-only hidden">Parameter</button>
+      <button data-tab="einstellungen" style="margin-left:auto;">Einstellungen <span class="version-badge" id="version-badge-nav"></span></button>
+    </nav>
+
+    <main>
+
+      <!-- ---------- Übersicht ---------- -->
+      <section class="tab-section active" id="tab-uebersicht">
+        <div class="summary-cards" id="summary-cards"></div>
+        <div class="btn-row" style="justify-content:flex-end;margin-bottom:14px;">
+          <button class="btn secondary" id="btn-export-open">📤 Personal exportieren</button>
+        </div>
+        <div class="card">
+          <h2>Nach Mannschaft</h2>
+          <div class="table-scroll">
+            <table class="data-table" id="uebersicht-mannschaft">
+              <thead><tr><th>Mannschaft</th><th class="num">Trainer</th><th class="num">Schwerpunkt</th><th class="num">Förderung</th><th class="num">Summe / Monat</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Trainer ---------- -->
+      <section class="tab-section" id="tab-trainer">
+        <div class="import-banner hidden" id="import-banner">
+          <p>Es sind noch keine Personen erfasst. Der bestehende Excel-Bestand kann einmalig (als JSON-Datei) importiert werden.</p>
+          <button class="btn success admin-only hidden" id="btn-import-seed">Datendatei auswählen…</button>
+          <input type="file" id="import-file-input" accept="application/json" class="hidden" />
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input type="search" data-filter="trainer" id="trainer-search" placeholder="Suche nach Name / Mannschaft…" />
+            <select data-filter="trainer" id="trainer-mannschaft"><option value="">Alle Mannschaften</option></select>
+            <select data-filter="trainer" id="trainer-position"><option value="">Alle Positionen</option></select>
+            <select data-filter="trainer" id="trainer-lizenz"><option value="">Alle Lizenzen</option></select>
+            <span class="filter-count" id="trainer-count"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="trainer-table">
+              <thead><tr>
+                <th>Name</th><th>Mannschaft</th><th>Position</th><th>Jahrgangsl.</th><th>Lizenz</th><th>Landesebene</th>
+                <th class="num">Stelle</th><th class="num">AE 100%</th><th class="num">AE / Monat</th>
+              </tr></thead>
+              <tbody id="trainer-rows"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="trainer-empty">Keine Trainer gefunden.</div>
+        </div>
+        <button class="btn admin-only hidden" data-add="trainer">+ Trainer hinzufügen</button>
+      </section>
+
+      <!-- ---------- Schwerpunkttrainer ---------- -->
+      <section class="tab-section" id="tab-schwerpunkt">
+        <div class="card">
+          <div class="filter-bar">
+            <input type="search" data-filter="schwerpunkt" id="schwerpunkt-search" placeholder="Suche nach Name / Mannschaft…" />
+            <select data-filter="schwerpunkt" id="schwerpunkt-mannschaft"><option value="">Alle Mannschaften</option></select>
+            <select data-filter="schwerpunkt" id="schwerpunkt-position"><option value="">Alle Positionen</option></select>
+            <span class="filter-count" id="schwerpunkt-count"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="schwerpunkt-table">
+              <thead><tr>
+                <th>Name</th><th>Mannschaft</th><th>Position</th><th>Besonderheit</th><th>Einh./Woche</th><th class="num">AE / Monat</th>
+              </tr></thead>
+              <tbody id="schwerpunkt-rows"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="schwerpunkt-empty">Keine Einträge gefunden.</div>
+        </div>
+        <button class="btn admin-only hidden" data-add="schwerpunkt">+ Schwerpunkttrainer hinzufügen</button>
+      </section>
+
+      <!-- ---------- Förderung ---------- -->
+      <section class="tab-section" id="tab-foerderung">
+        <div class="card">
+          <div class="filter-bar">
+            <input type="search" data-filter="foerderung" id="foerderung-search" placeholder="Suche nach Name / Mannschaft…" />
+            <select data-filter="foerderung" id="foerderung-mannschaft"><option value="">Alle Mannschaften</option></select>
+            <select data-filter="foerderung" id="foerderung-position"><option value="">Alle Positionen</option></select>
+            <span class="filter-count" id="foerderung-count"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="foerderung-table">
+              <thead><tr>
+                <th>Name</th><th>Mannschaft</th><th>Position</th><th>Besonderheit</th><th class="num">AE / Monat</th>
+              </tr></thead>
+              <tbody id="foerderung-rows"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="foerderung-empty">Keine Einträge gefunden.</div>
+        </div>
+        <button class="btn admin-only hidden" data-add="foerderung">+ Förderung hinzufügen</button>
+      </section>
+
+      <!-- ---------- Parameter (nur Admin) ---------- -->
+      <section class="tab-section" id="tab-parameter">
+        <div class="card">
+          <h2>Parameter — €-Sätze</h2>
+          <p class="muted" style="margin-bottom:16px;">Diese Sätze fließen in die automatische AE-Berechnung der Trainer ein (Position + Lizenz + Landesebene + Jahrgangsleiter). Gelten für alle Saisons.</p>
+          <div id="parameter-groups"></div>
+        </div>
+      </section>
+
+      <!-- ---------- Einstellungen ---------- -->
+      <section class="tab-section" id="tab-einstellungen">
+        <div class="card">
+          <h2>Saison</h2>
+          <div class="form-grid">
+            <div class="form-field"><label>Aktive Saison</label><span id="season-info"></span></div>
+          </div>
+          <div class="btn-row admin-only hidden" style="justify-content:flex-start;margin-top:6px;">
+            <button class="btn small" id="btn-season-new">Neue Saison…</button>
+            <button class="btn small secondary" id="btn-season-duplicate">Aktuelle duplizieren…</button>
+            <button class="btn small danger" id="btn-season-delete">Saison löschen…</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Info <span class="version-badge" id="version-badge-2"></span></h2>
+          <div class="form-grid" id="meta-view"></div>
+          <p class="muted" id="einstellungen-user" style="margin-top:10px;"></p>
+        </div>
+        <div class="card">
+          <h2>Änderungen</h2>
+          <div id="changelog-list"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ---------- Personen-Formular (generisch je Bereich) ---------- -->
+  <div class="modal-overlay hidden" id="person-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="person-modal-title">Person</h2>
+        <button class="modal-close" id="person-modal-close" aria-label="Schließen">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="person-form">
+          <div class="form-grid" id="pf-fields"></div>
+          <div class="ae-preview hidden" id="pf-ae-preview"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn danger hidden" id="btn-delete-person">Löschen</button>
+        <div class="btn-row">
+          <button class="btn secondary" id="btn-cancel-person">Abbrechen</button>
+          <button class="btn success" id="btn-save-person">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Export ---------- -->
+  <div class="modal-overlay hidden" id="export-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📤 Personal exportieren</h2>
+        <button class="modal-close" id="export-modal-close" aria-label="Schließen">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted" style="margin-bottom:14px;">Saison <strong id="export-modal-season"></strong> — wählt aus, welche Bereiche und Angaben in den Export übernommen werden sollen.</p>
+        <h3 class="export-section-title">Bereiche</h3>
+        <div class="export-fields" id="export-bereiche"></div>
+        <h3 class="export-section-title">Angaben</h3>
+        <div class="export-fields" id="export-fields"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" id="btn-export-cancel">Abbrechen</button>
+        <div class="btn-row">
+          <button class="btn secondary" id="btn-export-text">📄 Als Text (.txt)</button>
+          <button class="btn success" id="btn-export-pdf">🖨 Als PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Druckbereich (nur für PDF-Export sichtbar) ---------- -->
+  <div id="print-area"><div id="print-content"></div></div>
+
+  <script src="config.js?v=1.0"></script>
+  <script src="db.js?v=1.0"></script>
+  <script src="app.js?v=1.0"></script>
+</body>
+</html>
