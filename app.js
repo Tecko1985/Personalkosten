@@ -28,6 +28,7 @@ let currentUser = null;
 let currentTab = "uebersicht";
 let editing = { bereich: null, id: null };
 let persistTimer = null;
+let trainerProfiles = null; // zentrale Lizenz/Mannschaft-Profile aller Nutzer, lazy geladen (siehe openPersonModal)
 
 // ---------- Normalisierung ----------
 function normalizeParamGroup(arr, fallback) {
@@ -555,9 +556,48 @@ function openPersonModal(bereich, id) {
     preview.classList.add("hidden");
   }
 
+  const picker = document.getElementById("pf-profile-picker");
+  if (bereich === "trainer" && !obj) {
+    picker.classList.remove("hidden");
+    loadTrainerProfilesIntoPicker();
+  } else {
+    picker.classList.add("hidden");
+  }
+
   document.getElementById("person-modal").classList.remove("hidden");
   const first = document.getElementById("pf-name");
   if (first) first.focus();
+}
+
+async function loadTrainerProfilesIntoPicker() {
+  const sel = document.getElementById("pf-profile-select");
+  if (trainerProfiles === null) {
+    sel.innerHTML = `<option value="">Lädt…</option>`;
+    try {
+      trainerProfiles = await fetchTrainerProfiles();
+    } catch (_) {
+      trainerProfiles = [];
+    }
+  }
+  const sorted = trainerProfiles.slice().sort((a, b) => `${a.vorname} ${a.nachname}`.localeCompare(`${b.vorname} ${b.nachname}`, "de"));
+  sel.innerHTML = `<option value="">— Person wählen —</option>` +
+    sorted.map((p) => `<option value="${escapeHtml(p.username)}">${escapeHtml(p.vorname + " " + p.nachname)}</option>`).join("");
+}
+
+// Übernimmt Mannschaft + Lizenz aus dem zentralen Trainerprofil in die (weiterhin frei
+// editierbaren) Formularfelder — kein Zurückschreiben, keine Live-Synchronisation.
+function applySelectedProfile() {
+  const username = document.getElementById("pf-profile-select").value;
+  if (!username) return;
+  const p = (trainerProfiles || []).find((x) => x.username === username);
+  if (!p) return;
+  const nameEl = document.getElementById("pf-name");
+  if (nameEl && !nameEl.value.trim()) nameEl.value = `${p.vorname} ${p.nachname}`.trim();
+  const mannschaftEl = document.getElementById("pf-mannschaft");
+  if (mannschaftEl && p.mannschaften.length) mannschaftEl.value = p.mannschaften.join(", ");
+  const lizenzEl = document.getElementById("pf-lizenz");
+  if (lizenzEl && p.lizenz) lizenzEl.value = p.lizenz;
+  updateAePreview();
 }
 
 function readPersonForm(bereich) {
@@ -782,6 +822,7 @@ function setupListeners() {
   document.getElementById("btn-cancel-person").addEventListener("click", closePersonModal);
   document.getElementById("btn-save-person").addEventListener("click", savePerson);
   document.getElementById("btn-delete-person").addEventListener("click", deletePerson);
+  document.getElementById("btn-apply-profile").addEventListener("click", applySelectedProfile);
   document.getElementById("person-modal").addEventListener("click", (e) => { if (e.target.id === "person-modal") closePersonModal(); });
   document.getElementById("person-form").addEventListener("submit", (e) => { e.preventDefault(); savePerson(); });
 

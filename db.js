@@ -63,3 +63,10 @@ async function gatewaySave(dataObj) {
 async function fetchMe() {
   return gatewayRequest({ action: "me" });
 }
+
+// Zentrales Trainerprofil (Lizenz + Mannschaften) ALLER Nutzer — für die
+// "aus zentralem Profil übernehmen"-Auswahl beim Anlegen eines neuen Trainers.
+async function fetchTrainerProfiles() {
+  const body = await gatewayRequest({ action: "list-trainer-profiles" });
+  return Array.isArray(body.profiles) ? body.profiles : [];
+}

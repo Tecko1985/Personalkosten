@@ -180,6 +180,18 @@
       </div>
       <div class="modal-body">
         <form id="person-form">
+          <div class="form-grid hidden" id="pf-profile-picker">
+            <div class="form-field wide">
+              <label>Aus zentralem Trainerprofil übernehmen</label>
+              <select id="pf-profile-select">
+                <option value="">— Person wählen —</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>&nbsp;</label>
+              <button type="button" class="btn secondary" id="btn-apply-profile">Übernehmen</button>
+            </div>
+          </div>
           <div class="form-grid" id="pf-fields"></div>
           <div class="ae-preview hidden" id="pf-ae-preview"></div>
         </form>
@@ -221,8 +233,8 @@
   <!-- ---------- Druckbereich (nur für PDF-Export sichtbar) ---------- -->
   <div id="print-area"><div id="print-content"></div></div>
 
-  <script src="config.js?v=1.0"></script>
-  <script src="db.js?v=1.0"></script>
-  <script src="app.js?v=1.0"></script>
+  <script src="config.js?v=1.1"></script>
+  <script src="db.js?v=1.1"></script>
+  <script src="app.js?v=1.1"></script>
 </body>
 </html>
