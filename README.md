@@ -10,6 +10,7 @@ gemeinsame Login-Gateway der [ToolsUebersicht](https://tecko1985.github.io/Tools
 - **Übersicht** — Summen je Bereich und je Mannschaft, monatlich und aufs Jahr hochgerechnet.
 - **Trainer** — AE wird automatisch aus Position + Lizenz + Landesebene + Jahrgangsleiter
   berechnet und mit dem Stellenanteil multipliziert; manueller Überschreibwert je Person möglich.
+  Mannschaft und Lizenz können beim Anlegen optional aus dem zentralen Trainerprofil übernommen werden.
 - **Schwerpunkttrainer** / **Förderung** — Beträge werden direkt gepflegt.
 - **Parameter** (nur Admin) — die €-Sätze der Berechnung.
 - **Export** — Personalübersicht als Text (.txt) oder PDF (über den Druckdialog),

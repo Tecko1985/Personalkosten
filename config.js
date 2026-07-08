@@ -1,4 +1,4 @@
-const APP_VERSION = "1.3";
+const APP_VERSION = "1.0";
 
 // Jahres-Faktor für Hochrechnung Monat -> Jahr (Sommerpause: 11 statt 12 Monate,
 // wie in der Excel "Summe/Jahr" = Summe * 11).
@@ -45,17 +45,6 @@ const BEREICHE = [
 
 const APP_CHANGELOG = [
   {
-    version: "1.3",
-    groups: [
-      {
-        title: "Versionsbadge",
-        items: [
-          "Der Versionshinweis oben neben dem Titel ist jetzt anklickbar und führt direkt zu dieser Änderungsübersicht."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
@@ -70,7 +59,8 @@ const APP_CHANGELOG = [
         title: "Berechnung (Trainer)",
         items: [
           "Aufwandsentschädigung wird automatisch aus Position + Lizenz + Landesebene + Jahrgangsleiter berechnet und mit dem Stellenanteil multipliziert.",
-          "Die €-Sätze pflegt der Admin im Bereich „Parameter“; ein manueller Überschreibwert je Person ist möglich."
+          "Die €-Sätze pflegt der Admin im Bereich „Parameter“; ein manueller Überschreibwert je Person ist möglich.",
+          "Beim Anlegen eines Trainers können Mannschaft und Lizenz optional aus dem zentralen Trainerprofil übernommen werden (einmalig, weiterhin frei änderbar)."
         ]
       },
       {
