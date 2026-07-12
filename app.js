@@ -252,12 +252,16 @@ const EXPORT_FIELDS = [
   { key: "jahrgangsleiter", label: "Jahrgangsleiter" },
   { key: "lizenz", label: "Lizenz" },
   { key: "landesebene", label: "Landesebene" },
-  { key: "stelle", label: "Stelle", num: true, fmt: (v) => (v == null ? "—" : fmtPct(v)) },
-  { key: "ae100", label: "AE 100%", num: true, fmt: (v) => (v == null ? "—" : fmtEuro(v)) },
-  { key: "aeMonat", label: "AE / Monat", num: true, fmt: (v) => fmtEuro(v) },
+  { key: "stelle", label: "Stelle", num: true, fmt: (v) => (v == null ? "—" : fmtPct(v)), csvFmt: (v) => (v == null ? "" : numFmt(v * 100, 1)) },
+  { key: "ae100", label: "AE 100%", num: true, fmt: (v) => (v == null ? "—" : fmtEuro(v)), csvFmt: (v) => (v == null ? "" : numFmt(v, 2)) },
+  { key: "aeMonat", label: "AE / Monat", num: true, fmt: (v) => fmtEuro(v), csvFmt: (v) => numFmt(v, 2) },
   { key: "besonderheit", label: "Besonderheit" }
 ];
 EXPORT_FIELDS.forEach((f) => { if (!f.fmt) f.fmt = (v) => v || ""; });
+// csvFmt liefert den reinen Zahlenwert im de-DE-Format ("1.234,56") ohne Symbol
+// (€/%), damit Excel die Spalte als Zahl erkennt und summieren kann — anders als
+// fmt, das für Text/PDF bewusst "1.234,56 €"/"—" zur Anzeige formatiert.
+EXPORT_FIELDS.forEach((f) => { if (!f.csvFmt) f.csvFmt = (v) => v || ""; });
 const EXPORT_DEFAULT_KEYS = ["bereich", "name", "mannschaft", "position", "aeMonat"];
 const EXPORT_BEREICHE = [
   { key: "trainer", label: "Trainer" },
@@ -386,6 +390,25 @@ function exportPersonalPdf() {
   const cleanup = () => { document.body.classList.remove("printing-report"); window.removeEventListener("afterprint", cleanup); };
   window.addEventListener("afterprint", cleanup);
   setTimeout(() => window.print(), 150);
+}
+
+// Semikolon statt Komma + UTF-8-BOM: deutsches Excel erkennt das Trennzeichen
+// damit automatisch beim Doppelklick und zeigt Umlaute korrekt.
+function csvCell(value) {
+  const s = value == null ? "" : String(value);
+  return /[;"\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function exportPersonalCsv() {
+  const bereiche = selectedExportBereiche();
+  if (!bereiche.length) { alert("Bitte mindestens einen Bereich auswählen."); return; }
+  const fields = selectedExportFields();
+  if (!fields.length) { alert("Bitte mindestens eine Angabe auswählen."); return; }
+  const rows = personalRows(bereiche.map((b) => b.key));
+  const lines = [fields.map((f) => f.label), ...rows.map((r) => fields.map((f) => f.csvFmt(r[f.key])))];
+  const csv = String.fromCharCode(0xFEFF) + lines.map((line) => line.map(csvCell).join(";")).join("\r\n");
+  download(`personalkosten_${currentSeasonKey().replace("/", "-")}_${localDateIso()}.csv`, "text/csv;charset=utf-8;", csv);
+  closeExportModal();
 }
 
 // ---------- Parameter-Editor ----------
@@ -874,6 +897,7 @@ function setupListeners() {
   document.getElementById("export-modal-close").addEventListener("click", closeExportModal);
   document.getElementById("btn-export-cancel").addEventListener("click", closeExportModal);
   document.getElementById("btn-export-text").addEventListener("click", exportPersonalText);
+  document.getElementById("btn-export-csv").addEventListener("click", exportPersonalCsv);
   document.getElementById("btn-export-pdf").addEventListener("click", exportPersonalPdf);
   document.getElementById("export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") closeExportModal(); });
 

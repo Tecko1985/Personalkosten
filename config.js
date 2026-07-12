@@ -1,4 +1,4 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 // Jahres-Faktor für Hochrechnung Monat -> Jahr (Sommerpause: 11 statt 12 Monate,
 // wie in der Excel "Summe/Jahr" = Summe * 11).
@@ -44,6 +44,17 @@ const BEREICHE = [
 ];
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Export",
+        items: [
+          "Personalübersicht zusätzlich als CSV (.csv) exportierbar — für Excel/Tabellenprogramme, Zahlenspalten direkt weiterrechenbar."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [
