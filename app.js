@@ -469,12 +469,13 @@ function renderHeaderUser() {
   const admin = currentUser.isAdmin ? " (Admin)" : "";
   if (el) el.textContent = "👤 " + name + admin;
   if (el2) el2.textContent = "Angemeldet als " + name + admin +
-    (currentUser.isAdmin ? "" : " — Bearbeiten ist Administratoren vorbehalten.");
+    (canEdit() ? "" : " — Bearbeiten ist dem Bearbeiten-Recht der Gruppen-Verwaltung vorbehalten.");
 }
+function canEdit() { return !!(currentUser && (currentUser.isAdmin || currentUser.canEdit)); }
 function applyAdminVisibility() {
-  const isAdmin = !!(currentUser && currentUser.isAdmin);
-  document.body.classList.toggle("is-admin", isAdmin);
-  document.querySelectorAll(".admin-only").forEach((el) => el.classList.toggle("hidden", !isAdmin));
+  const editable = canEdit();
+  document.body.classList.toggle("is-admin", editable);
+  document.querySelectorAll(".admin-only").forEach((el) => el.classList.toggle("hidden", !editable));
 }
 
 function renderAll() {
@@ -537,7 +538,7 @@ function fieldHtml(f) {
 }
 
 function openPersonModal(bereich, id) {
-  if (!(currentUser && currentUser.isAdmin)) return;
+  if (!canEdit()) return;
   const defs = FIELD_DEFS[bereich];
   const arr = getSeason()[bereich];
   const obj = id ? arr.find((x) => x.id === id) : null;
@@ -685,11 +686,15 @@ function deletePerson() {
 function switchSeason(key) {
   if (!appData.seasons[key]) return;
   appData.meta.currentSeason = key;
-  persist();
+  // Nur mit Bearbeiten-Recht persistieren -- sonst würde ein reines Durchblättern
+  // durch einen Nicht-Editor den geteilten "aktuelle Saison"-Zeiger für alle
+  // anderen verändern. Lokal wird trotzdem umgeschaltet (renderAll unten),
+  // reine Ansicht bleibt also für jeden mit Tool-Zugriff möglich.
+  if (canEdit()) persist();
   renderAll();
 }
 function newSeason() {
-  if (!(currentUser && currentUser.isAdmin)) return;
+  if (!canEdit()) return;
   const name = (prompt("Name der neuen (leeren) Saison, z. B. 2027/28:") || "").trim();
   if (!name) return;
   if (appData.seasons[name]) { alert("Diese Saison existiert bereits."); return; }
@@ -697,7 +702,7 @@ function newSeason() {
   switchSeason(name);
 }
 function duplicateSeason() {
-  if (!(currentUser && currentUser.isAdmin)) return;
+  if (!canEdit()) return;
   const name = (prompt("Name der neuen Saison (Kopie der aktuellen), z. B. 2027/28:") || "").trim();
   if (!name) return;
   if (appData.seasons[name]) { alert("Diese Saison existiert bereits."); return; }
@@ -707,7 +712,7 @@ function duplicateSeason() {
   switchSeason(name);
 }
 function deleteSeason() {
-  if (!(currentUser && currentUser.isAdmin)) return;
+  if (!canEdit()) return;
   if (Object.keys(appData.seasons).length <= 1) { alert("Die letzte Saison kann nicht gelöscht werden."); return; }
   const key = currentSeasonKey();
   if (!confirm(`Saison „${key}“ mit allen Einträgen wirklich löschen?`)) return;
@@ -720,7 +725,7 @@ function deleteSeason() {
 // ---------- Import (einmaliger Cloud-Seed) ----------
 function handleImportFile(file) {
   if (!file) return;
-  if (!(currentUser && currentUser.isAdmin)) { alert("Nur Administratoren können importieren."); return; }
+  if (!canEdit()) { alert("Nur Nutzer mit Bearbeiten-Recht können importieren."); return; }
   const reader = new FileReader();
   reader.onload = async () => {
     let parsed;
@@ -839,7 +844,7 @@ function setupListeners() {
     });
     document.getElementById(b + "-rows").addEventListener("click", (e) => {
       const row = e.target.closest(".data-row");
-      if (row && currentUser && currentUser.isAdmin) openPersonModal(b, row.dataset.id);
+      if (row && canEdit()) openPersonModal(b, row.dataset.id);
     });
   });
 
@@ -859,6 +864,7 @@ function setupListeners() {
   // Parameter-Editor (Event-Delegation)
   const pg = document.getElementById("parameter-groups");
   pg.addEventListener("input", (e) => {
+    if (!canEdit()) return;
     const el = e.target;
     if (!el.dataset.group) return;
     const g = el.dataset.group, i = Number(el.dataset.idx), k = el.dataset.k;
@@ -869,6 +875,7 @@ function setupListeners() {
     renderBereich("trainer");
   });
   pg.addEventListener("click", (e) => {
+    if (!canEdit()) return;
     const rm = e.target.closest("[data-remove]");
     if (rm) {
       appData.parameter[rm.dataset.remove].splice(Number(rm.dataset.idx), 1);
