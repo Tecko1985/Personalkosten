@@ -45,28 +45,6 @@ const BEREICHE = [
 
 const APP_CHANGELOG = [
   {
-    version: "1.2",
-    groups: [
-      {
-        title: "Bearbeiten-Recht",
-        items: [
-          "Personen/Saisons/Parameter bearbeiten und Import jetzt an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt, nicht mehr an Admin-Status allein. Saison-Auswahl bleibt für jeden zum Ansehen möglich, nur Nutzer mit Bearbeiten-Recht setzen die geteilte Standard-Saison neu."
-        ]
-      }
-    ]
-  },
-  {
-    version: "1.1",
-    groups: [
-      {
-        title: "Export",
-        items: [
-          "Personalübersicht zusätzlich als CSV (.csv) exportierbar — für Excel/Tabellenprogramme, Zahlenspalten direkt weiterrechenbar."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
@@ -88,14 +66,15 @@ const APP_CHANGELOG = [
       {
         title: "Export",
         items: [
-          "Personalübersicht exportierbar — als Text (.txt) zum Weitergeben oder als PDF zum Drucken/Ablegen.",
+          "Personalübersicht exportierbar — als Text (.txt) zum Weitergeben, als PDF zum Drucken/Ablegen oder als CSV (.csv) für Excel/Tabellenprogramme (Zahlenspalten direkt weiterrechenbar).",
           "Frei wählbar, welche Bereiche (Trainer, Schwerpunkttrainer, Förderung) und welche Angaben (Mannschaft, Position, Lizenz, AE/Monat, …) enthalten sein sollen."
         ]
       },
       {
-        title: "Bearbeiten (nur Admin) & Speicherung",
+        title: "Bearbeiten & Speicherung",
         items: [
-          "Personen anlegen, ändern und löschen; mehrere Saisons planbar (Saison duplizieren als Startpunkt).",
+          "Personen, Saisons und Parameter anlegen/ändern/löschen sowie der Import sind dem Bearbeiten-Recht der Gruppen-Verwaltung vorbehalten; mehrere Saisons sind planbar (Saison duplizieren als Startpunkt).",
+          "Die Saison-Auswahl zum Ansehen bleibt für alle freigegebenen Nutzer möglich, nur Nutzer mit Bearbeiten-Recht setzen die geteilte Standard-Saison neu.",
           "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht) — kein separates Passwort.",
           "Sichtbar nur für die freigegebene Gruppe (sensible Kostendaten)."
         ]
