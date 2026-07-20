@@ -769,7 +769,36 @@ function persist() {
   persistTimer = setTimeout(doPersist, 300);
 }
 async function saveNow() { clearTimeout(persistTimer); return doPersist(); }
-async function doPersist() {
+
+// Es darf immer nur EIN dav-save unterwegs sein. gatewayRev (das ETag, mit dem der
+// Worker Konflikte erkennt) wird erst aktualisiert, wenn ein Save zurückkommt —
+// ein zweiter Save, der währenddessen startet, schickt also dasselbe, inzwischen
+// veraltete ETag und wird zwangsläufig mit 409 abgelehnt. Für die bearbeitende
+// Person sah das aus wie "ein anderes Gerät hat geändert", obwohl sie allein war,
+// und reloadAfterConflict() verwarf dabei ihre letzte Eingabe.
+// Deshalb: Änderungen, die während eines laufenden Saves anfallen, nur vormerken
+// und danach in einem Rutsch nachschreiben. appData wird ohnehin immer komplett
+// geschrieben, es geht also nichts verloren, wenn mehrere Änderungen zusammenfallen.
+let saveRunner = null;
+let saveDirty = false;
+function doPersist() {
+  saveDirty = true;
+  if (!saveRunner) saveRunner = runSaveLoop().finally(() => { saveRunner = null; });
+  return saveRunner;
+}
+async function runSaveLoop() {
+  let ok = true;
+  while (saveDirty) {
+    saveDirty = false;
+    ok = await writeToGateway();
+    // Bei Konflikt/Fehler wurde der Stand neu geladen bzw. der Login-Screen
+    // gezeigt — dann NICHT blind nachschreiben, das würde den fremden Stand
+    // wieder überbügeln.
+    if (!ok) { saveDirty = false; break; }
+  }
+  return ok;
+}
+async function writeToGateway() {
   setSaveStatus("Speichern…", "pending");
   try {
     appData.meta = Object.assign({}, appData.meta, { stand: new Date().toISOString() });
