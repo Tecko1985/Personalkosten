@@ -40,6 +40,7 @@
       <button data-tab="schwerpunkt">Schwerpunkttrainer</button>
       <button data-tab="foerderung">Förderung</button>
       <button data-tab="parameter" class="admin-only hidden">Parameter</button>
+      <button data-tab="info">Info</button>
       <button data-tab="einstellungen" style="margin-left:auto;">Einstellungen</button>
     </nav>
 
@@ -144,6 +145,20 @@
         </div>
       </section>
 
+      <!-- ---------- Info ---------- -->
+      <section class="tab-section" id="tab-info">
+        <div class="card">
+          <h2>Über die Personalkosten <span class="version-badge" id="version-badge-2"></span></h2>
+          <p class="muted">Planung und Übersicht der Trainer-Aufwandsentschädigungen je Mannschaft und Saison.</p>
+          <div class="form-grid" id="meta-view"></div>
+          <p class="muted" id="einstellungen-user" style="margin-top:10px;"></p>
+        </div>
+        <div class="card">
+          <h2>Änderungen</h2>
+          <div id="changelog-list"></div>
+        </div>
+      </section>
+
       <!-- ---------- Einstellungen ---------- -->
       <section class="tab-section" id="tab-einstellungen">
         <div class="card">
@@ -156,15 +171,6 @@
             <button class="btn small secondary" id="btn-season-duplicate">Aktuelle duplizieren…</button>
             <button class="btn small danger" id="btn-season-delete">Saison löschen…</button>
           </div>
-        </div>
-        <div class="card">
-          <h2>Info <span class="version-badge" id="version-badge-2"></span></h2>
-          <div class="form-grid" id="meta-view"></div>
-          <p class="muted" id="einstellungen-user" style="margin-top:10px;"></p>
-        </div>
-        <div class="card">
-          <h2>Änderungen</h2>
-          <div id="changelog-list"></div>
         </div>
       </section>
 
@@ -236,6 +242,6 @@
 
   <script src="config.js?v=1.0"></script>
   <script src="db.js?v=1.0"></script>
-  <script src="app.js?v=1.0"></script>
+  <script src="app.js?v=1.1"></script>
 </body>
 </html>
