@@ -767,6 +767,7 @@ function setSaveStatus(text, kind) {
 function persist() {
   clearTimeout(persistTimer);
   setSaveStatus("Änderung noch nicht gespeichert…", "pending");
+  ungespeicherteAenderungen = true;
   persistTimer = setTimeout(doPersist, 300);
 }
 async function saveNow() { clearTimeout(persistTimer); return doPersist(); }
@@ -782,8 +783,17 @@ async function saveNow() { clearTimeout(persistTimer); return doPersist(); }
 // geschrieben, es geht also nichts verloren, wenn mehrere Änderungen zusammenfallen.
 let saveRunner = null;
 let saveDirty = false;
+// Fuer das Sicherheitsnetz beim Verlassen der Seite (beforeunload unter
+// runSaveLoop): "es liegt etwas an" und "der letzte Versuch ging schief".
+// Beides wird eigens gepflegt statt aus saveDirty/saveRunner abgeleitet -- der
+// Debounce-Timer laeuft schon, bevor saveDirty ueberhaupt gesetzt ist, und
+// genau dieses Fenster ist der Fall, den das Netz auffangen soll.
+let ungespeicherteAenderungen = false;
+let letzterSaveFehlgeschlagen = false;
+
 function doPersist() {
   saveDirty = true;
+  ungespeicherteAenderungen = true;
   if (!saveRunner) saveRunner = runSaveLoop().finally(() => { saveRunner = null; });
   return saveRunner;
 }
@@ -797,8 +807,32 @@ async function runSaveLoop() {
     // wieder überbügeln.
     if (!ok) { saveDirty = false; break; }
   }
+  // Nach einem sauberen Durchlauf ist alles draussen, sonst liegt noch etwas an.
+  ungespeicherteAenderungen = !ok;
+  letzterSaveFehlgeschlagen = !ok;
   return ok;
 }
+
+// Sicherheitsnetz beim Verlassen der Seite: ein noch nicht abgelaufener
+// Debounce-Timer und ein gerade laufender fetch gehen beim Entladen beide
+// verloren -- der Browser bricht laufende Requests ab. Der keepalive-Request
+// ueberlebt das Schliessen des Tabs.
+//
+// Nachgefragt wird NUR, wenn dieser Weg nicht traegt (Daten ueber der
+// 64-KB-Grenze, kein Token, oder der letzte regulaere Versuch schlug schon
+// fehl). Sonst kaeme die Rueckfrage bei JEDEM Schliessen kurz nach einer
+// Aenderung -- also staendig -- und wuerde reflexhaft weggeklickt, gerade dann
+// wenn sie einmal wirklich zaehlt.
+window.addEventListener("beforeunload", (e) => {
+  if (!ungespeicherteAenderungen) return;
+  // Apps mit zusaetzlichem lokalem Datei-Modus duerfen hier nichts ins Gateway
+  // schicken: dort ist die lokale Datei die Wahrheit, nicht Nextcloud.
+  if (typeof storageMode !== "undefined" && storageMode !== "gateway") return;
+  const abgeschickt = gatewaySaveBeacon(appData);
+  if (abgeschickt && !letzterSaveFehlgeschlagen) return;
+  e.preventDefault();
+  e.returnValue = "";
+});
 async function writeToGateway() {
   setSaveStatus("Speichern…", "pending");
   try {
