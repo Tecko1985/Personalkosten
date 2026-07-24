@@ -76,7 +76,8 @@ const APP_CHANGELOG = [
           "Personen, Saisons und Parameter anlegen/ändern/löschen sowie der Import sind dem Bearbeiten-Recht der Gruppen-Verwaltung vorbehalten; mehrere Saisons sind planbar (Saison duplizieren als Startpunkt).",
           "Die Saison-Auswahl zum Ansehen bleibt für alle freigegebenen Nutzer möglich, nur Nutzer mit Bearbeiten-Recht setzen die geteilte Standard-Saison neu.",
           "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht) — kein separates Passwort.",
-          "Sichtbar nur für die freigegebene Gruppe (sensible Kostendaten)."
+          "Sichtbar nur für die freigegebene Gruppe (sensible Kostendaten).",
+          "Der Einstellungen-Tab (Saisonverwaltung) erscheint nur noch für Bearbeiter und Admins — für alle anderen war er bis auf die Saison-Anzeige leer."
         ]
       }
     ]
