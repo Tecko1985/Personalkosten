@@ -472,10 +472,19 @@ function renderHeaderUser() {
     (canEdit() ? "" : " — Bearbeiten ist dem Bearbeiten-Recht der Gruppen-Verwaltung vorbehalten.");
 }
 function canEdit() { return !!(currentUser && (currentUser.isAdmin || currentUser.canEdit)); }
+// Dritte Stufe "Administrieren" (Tools-Übersicht, seit 2026-07-24): Saison-
+// Verwaltung und Daten-Import hängen an dieser Stufe. Die Klassen-Semantik ist
+// seither flottenweit einheitlich: .editor-only = canEdit (Personal pflegen,
+// Parameter, Export), .admin-only = canAdmin (Saison-CRUD, Import,
+// Einstellungen-Tab). body.is-admin bleibt bewusst an canEdit (steuert die
+// Klickbarkeit der Datenzeilen, Name von CSS referenziert).
+function canAdmin() { return !!(currentUser && (currentUser.isAdmin || currentUser.canAdmin)); }
 function applyAdminVisibility() {
   const editable = canEdit();
+  const admin = canAdmin();
   document.body.classList.toggle("is-admin", editable);
-  document.querySelectorAll(".admin-only").forEach((el) => el.classList.toggle("hidden", !editable));
+  document.querySelectorAll(".editor-only").forEach((el) => el.classList.toggle("hidden", !editable));
+  document.querySelectorAll(".admin-only").forEach((el) => el.classList.toggle("hidden", !admin));
 }
 
 function renderAll() {
@@ -694,7 +703,7 @@ function switchSeason(key) {
   renderAll();
 }
 function newSeason() {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   const name = (prompt("Name der neuen (leeren) Saison, z. B. 2027/28:") || "").trim();
   if (!name) return;
   if (appData.seasons[name]) { alert("Diese Saison existiert bereits."); return; }
@@ -702,7 +711,7 @@ function newSeason() {
   switchSeason(name);
 }
 function duplicateSeason() {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   const name = (prompt("Name der neuen Saison (Kopie der aktuellen), z. B. 2027/28:") || "").trim();
   if (!name) return;
   if (appData.seasons[name]) { alert("Diese Saison existiert bereits."); return; }
@@ -712,7 +721,7 @@ function duplicateSeason() {
   switchSeason(name);
 }
 function deleteSeason() {
-  if (!canEdit()) return;
+  if (!canAdmin()) return;
   if (Object.keys(appData.seasons).length <= 1) { alert("Die letzte Saison kann nicht gelöscht werden."); return; }
   const key = currentSeasonKey();
   if (!confirm(`Saison „${key}“ mit allen Einträgen wirklich löschen?`)) return;
@@ -725,7 +734,7 @@ function deleteSeason() {
 // ---------- Import (einmaliger Cloud-Seed) ----------
 function handleImportFile(file) {
   if (!file) return;
-  if (!canEdit()) { alert("Nur Nutzer mit Bearbeiten-Recht können importieren."); return; }
+  if (!canAdmin()) { alert("Importieren ist Administrierenden vorbehalten."); return; }
   const reader = new FileReader();
   reader.onload = async () => {
     let parsed;

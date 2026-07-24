@@ -39,7 +39,7 @@
       <button data-tab="trainer">Trainer</button>
       <button data-tab="schwerpunkt">Schwerpunkttrainer</button>
       <button data-tab="foerderung">Förderung</button>
-      <button data-tab="parameter" class="admin-only hidden">Parameter</button>
+      <button data-tab="parameter" class="editor-only hidden">Parameter</button>
       <div class="nav-right">
         <button data-tab="einstellungen" class="admin-only hidden">Einstellungen</button>
         <button data-tab="info">Info</button>
@@ -52,7 +52,7 @@
       <section class="tab-section active" id="tab-uebersicht">
         <div class="summary-cards" id="summary-cards"></div>
         <div class="btn-row" style="justify-content:flex-end;margin-bottom:14px;">
-          <button class="btn secondary" id="btn-export-open">📤 Personal exportieren</button>
+          <button class="btn secondary editor-only hidden" id="btn-export-open">📤 Personal exportieren</button>
         </div>
         <div class="card">
           <h2>Nach Mannschaft</h2>
@@ -91,7 +91,7 @@
           </div>
           <div class="empty-state hidden" id="trainer-empty">Keine Trainer gefunden.</div>
         </div>
-        <button class="btn admin-only hidden" data-add="trainer">+ Trainer hinzufügen</button>
+        <button class="btn editor-only hidden" data-add="trainer">+ Trainer hinzufügen</button>
       </section>
 
       <!-- ---------- Schwerpunkttrainer ---------- -->
@@ -113,7 +113,7 @@
           </div>
           <div class="empty-state hidden" id="schwerpunkt-empty">Keine Einträge gefunden.</div>
         </div>
-        <button class="btn admin-only hidden" data-add="schwerpunkt">+ Schwerpunkttrainer hinzufügen</button>
+        <button class="btn editor-only hidden" data-add="schwerpunkt">+ Schwerpunkttrainer hinzufügen</button>
       </section>
 
       <!-- ---------- Förderung ---------- -->
@@ -135,7 +135,7 @@
           </div>
           <div class="empty-state hidden" id="foerderung-empty">Keine Einträge gefunden.</div>
         </div>
-        <button class="btn admin-only hidden" data-add="foerderung">+ Förderung hinzufügen</button>
+        <button class="btn editor-only hidden" data-add="foerderung">+ Förderung hinzufügen</button>
       </section>
 
       <!-- ---------- Parameter (nur Admin) ---------- -->
@@ -242,8 +242,8 @@
   <!-- ---------- Druckbereich (nur für PDF-Export sichtbar) ---------- -->
   <div id="print-area"><div id="print-content"></div></div>
 
-  <script src="config.js?v=1.1"></script>
+  <script src="config.js?v=1.2"></script>
   <script src="db.js?v=1.1"></script>
-  <script src="app.js?v=1.2"></script>
+  <script src="app.js?v=1.3"></script>
 </body>
 </html>

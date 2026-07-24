@@ -77,7 +77,8 @@ const APP_CHANGELOG = [
           "Die Saison-Auswahl zum Ansehen bleibt für alle freigegebenen Nutzer möglich, nur Nutzer mit Bearbeiten-Recht setzen die geteilte Standard-Saison neu.",
           "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht) — kein separates Passwort.",
           "Sichtbar nur für die freigegebene Gruppe (sensible Kostendaten).",
-          "Der Einstellungen-Tab (Saisonverwaltung) erscheint nur noch für Bearbeiter und Admins — für alle anderen war er bis auf die Saison-Anzeige leer."
+          "Saisonverwaltung und Daten-Import (samt Einstellungen-Tab) sind der Stufe „Administrieren“ vorbehalten (Häkchen im Sichtbarkeits-Panel der Tools-Übersicht) — Bearbeiter pflegen Personal und Parameter, strukturelle Eingriffe macht die Administration.",
+          "Der Personal-Export steht nur noch Bearbeitern zur Verfügung — reine Betrachter sehen den Export-Knopf nicht mehr."
         ]
       }
     ]
