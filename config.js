@@ -45,51 +45,57 @@ const BEREICHE = [
 
 const APP_CHANGELOG = [
   {
-    version: "1.1",
-    groups: [
-      {
-        title: "Bedienung am Handy",
-        items: [
-          "Eingabefelder sind am Handy mindestens 16 Pixel groß. Dadurch zoomt der iPhone-Browser beim Antippen eines Feldes nicht mehr ungefragt in die Seite hinein und bleibt danach verschoben stehen."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
         title: "Personalkosten",
         items: [
-          "Löst die Excel „Personalkosten Mannschaften“ ab: Trainer, Schwerpunkttrainer und Förderung als bearbeitbare Tabellen.",
+          "Planung und Auswertung der Aufwandsentschädigungen aller Mannschaften — an Stelle der bisherigen Excel-Tabelle.",
+          "Drei Bereiche als bearbeitbare Tabellen: Trainer, Schwerpunkttrainer und Förderung.",
           "Kosten-Übersicht mit Summen je Bereich und je Mannschaft, monatlich und aufs Jahr hochgerechnet.",
-          "Filterbare Tabellen (Suche + Mannschaft/Position/Lizenz) — auch fürs Handy."
+          "Tabellen mit Suche und Filter nach Mannschaft, Position und Lizenz.",
+          "Mehrere Saisons planbar; eine bestehende Saison lässt sich als Startpunkt duplizieren."
         ]
       },
       {
-        title: "Berechnung (Trainer)",
+        title: "Wie die Aufwandsentschädigung berechnet wird",
         items: [
-          "Aufwandsentschädigung wird automatisch aus Position + Lizenz + Landesebene + Jahrgangsleiter berechnet und mit dem Stellenanteil multipliziert.",
-          "Die €-Sätze pflegt der Admin im Bereich „Parameter“; ein manueller Überschreibwert je Person ist möglich.",
-          "Beim Anlegen eines Trainers können Mannschaft und Lizenz optional aus dem zentralen Trainerprofil übernommen werden (einmalig, weiterhin frei änderbar)."
+          "Der Betrag ergibt sich aus Position, Lizenz, Landesebene und Jahrgangsleiter-Funktion und wird mit dem Stellenanteil multipliziert.",
+          "Die Euro-Sätze dahinter stehen im Bereich „Parameter“ und sind dort pflegbar.",
+          "Je Person lässt sich der berechnete Wert von Hand überschreiben, wenn eine Vereinbarung davon abweicht.",
+          "Beim Anlegen eines Trainers können Mannschaft und Lizenz aus dem zentralen Trainerprofil übernommen werden — einmalig beim Anlegen, danach frei änderbar."
+        ]
+      },
+      {
+        title: "Wer darf was",
+        items: [
+          "Das Werkzeug ist nur für die freigegebene Gruppe sichtbar, weil es sensible Kostendaten enthält.",
+          "Sehen: alle Tabellen und Summen, schreibgeschützt. Die Saison lässt sich zum Ansehen wechseln.",
+          "Bearbeiten: Personen und Parameter anlegen, ändern und löschen. Dazu der Export und das Setzen der gemeinsamen Standard-Saison.",
+          "Administrieren: zusätzlich Saisonverwaltung und Daten-Import im Reiter „Einstellungen“.",
+          "Der Reiter „Info“ ist für alle sichtbar."
         ]
       },
       {
         title: "Export",
         items: [
-          "Personalübersicht exportierbar — als Text (.txt) zum Weitergeben, als PDF zum Drucken/Ablegen oder als CSV (.csv) für Excel/Tabellenprogramme (Zahlenspalten direkt weiterrechenbar).",
-          "Frei wählbar, welche Bereiche (Trainer, Schwerpunkttrainer, Förderung) und welche Angaben (Mannschaft, Position, Lizenz, AE/Monat, …) enthalten sein sollen."
+          "Die Personalübersicht lässt sich in drei Formaten ausgeben: als Text zum Weitergeben, als PDF zum Drucken oder Ablegen und als CSV für Excel.",
+          "Im CSV sind die Zahlenspalten echte Zahlen und lassen sich direkt weiterrechnen.",
+          "Frei wählbar, welche Bereiche und welche Spalten enthalten sein sollen."
         ]
       },
       {
-        title: "Bearbeiten & Speicherung",
+        title: "Bedienung am Handy",
         items: [
-          "Personen, Saisons und Parameter anlegen/ändern/löschen sowie der Import sind dem Bearbeiten-Recht der Gruppen-Verwaltung vorbehalten; mehrere Saisons sind planbar (Saison duplizieren als Startpunkt).",
-          "Die Saison-Auswahl zum Ansehen bleibt für alle freigegebenen Nutzer möglich, nur Nutzer mit Bearbeiten-Recht setzen die geteilte Standard-Saison neu.",
-          "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht) — kein separates Passwort.",
-          "Sichtbar nur für die freigegebene Gruppe (sensible Kostendaten).",
-          "Saisonverwaltung und Daten-Import (samt Einstellungen-Tab) sind der Stufe „Administrieren“ vorbehalten (Häkchen im Sichtbarkeits-Panel der Tools-Übersicht) — Bearbeiter pflegen Personal und Parameter, strukturelle Eingriffe macht die Administration.",
-          "Der Personal-Export steht nur noch Bearbeitern zur Verfügung — reine Betrachter sehen den Export-Knopf nicht mehr."
+          "Die Ansicht ist für das Handy gebaut; Suche und Filter helfen dort mehr als die breite Tabelle.",
+          "Eingabefelder sind mindestens 16 Pixel groß, damit der iPhone-Browser beim Antippen nicht ungefragt in die Seite hineinzoomt und verschoben stehen bleibt."
+        ]
+      },
+      {
+        title: "Daten & Speicherung",
+        items: [
+          "Gespeichert wird in der Vereins-Nextcloud über die zentrale Anmeldung der Tools-Übersicht — ein eigenes Passwort braucht es nicht.",
+          "Ändern zwei Geräte gleichzeitig denselben Stand, erkennt die App das, lädt den fremden Stand nach und sagt Bescheid."
         ]
       }
     ]
