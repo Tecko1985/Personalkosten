@@ -3,7 +3,7 @@
 Interne Web-App des **1. SC 1911 e.V. Heilbad Heiligenstadt** zur Planung der
 Personalkosten / Aufwandsentschädigungen (AE) im Nachwuchsbereich. Löst die bisherige
 Excel-Planung ab und speichert die Daten zentral in der Vereins-Nextcloud über das
-gemeinsame Login-Gateway der [ToolsUebersicht](https://tecko1985.github.io/ToolsUebersicht/).
+gemeinsame Login-Gateway der [ToolsUebersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/).
 
 ## Bereiche
 
