@@ -1,26 +1,23 @@
-# Personalkosten Mannschaften (v1.0)
+# 💶 Personalkosten
 
-Interne Web-App des **1. SC 1911 e.V. Heilbad Heiligenstadt** zur Planung der
-Personalkosten / Aufwandsentschädigungen (AE) im Nachwuchsbereich. Löst die bisherige
-Excel-Planung ab und speichert die Daten zentral in der Vereins-Nextcloud über das
-gemeinsame Login-Gateway der [ToolsUebersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/).
+Personalkosten / Aufwandsentschädigungen der Mannschaften planen und auswerten (nur für berechtigte Gruppe).
 
-## Bereiche
+**➡️ [Personalkosten öffnen](https://sc1911heiligenstadt.github.io/Personalkosten/)**
 
-- **Übersicht** — Summen je Bereich und je Mannschaft, monatlich und aufs Jahr hochgerechnet.
-- **Trainer** — AE wird automatisch aus Position + Lizenz + Landesebene + Jahrgangsleiter
-  berechnet und mit dem Stellenanteil multipliziert; manueller Überschreibwert je Person möglich.
-  Mannschaft und Lizenz können beim Anlegen optional aus dem zentralen Trainerprofil übernommen werden.
-- **Schwerpunkttrainer** / **Förderung** — Beträge werden direkt gepflegt.
-- **Parameter** (nur Admin) — die €-Sätze der Berechnung.
-- **Export** — Personalübersicht als Text (.txt) oder PDF (über den Druckdialog),
-  Bereiche und Spalten frei wählbar.
-- Mehrere Saisons planbar; filterbare Tabellen.
+## Zugang
+
+Die Anmeldung läuft über die [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/) — dort einmal anmelden, danach ist dieses Werkzeug offen.
+
+Die Rechte gelten in drei Stufen: **Sehen** (nur ansehen), **Bearbeiten** (Einträge pflegen) und **Administrieren** (Einstellungen und Verwaltung). Wer welche Stufe hat, legt die Tools-Übersicht fest.
+
+## Lokal starten
+
+Über den Eintrag `personalkosten` in `E:\.claude\launch.json` — der Server läuft dann auf `http://localhost:8781/`.
 
 ## Technik
 
-Reines HTML/CSS/Vanilla-JS ohne Build-Step. Persistenz ausschließlich über das
-ToolsUebersicht-Gateway (`db.js`); es werden **keine Personendaten im Repository** abgelegt
-(siehe `tools/README.md`). Sichtbar nur für die freigegebene Gruppe.
+Vanilla JavaScript ohne Build-Schritt — die Dateien werden so ausgeliefert, wie sie im Repo liegen. Veröffentlicht über GitHub Pages. Die Daten liegen in der Vereins-Nextcloud; der Zugriff läuft ausschließlich über den Login-Worker der Tools-Übersicht, nie mit Zugangsdaten im Browser.
 
-Lokaler Test: `E:\.claude\launch.json` → Eintrag `personalkosten` (Port 8781).
+---
+
+Ein Werkzeug des 1. SC 1911 Heiligenstadt. Alle Werkzeuge auf einen Blick: [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/) · Erklärungen im [Toolbox Wiki](https://sc1911heiligenstadt.github.io/Vereinswiki/).
